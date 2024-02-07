@@ -1,0 +1,164 @@
+---
+title: "Analyze and Visualize Survey Responses"
+author: "Caitlin Mothes, PhD"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(wordcloud)
+
+# read in data
+data <- readxl::read_excel("data/Crowdsourcing Rules for Data Communication and Translation(1-17).xlsx",
+                           sheet = "Sheet1")
+```
+
+Q1: Define successful data communication
+```{r}
+# remove stop words
+q1 <- data %>% 
+  select(`How do you define successful data communication or translation?`) %>% 
+  unnest_tokens(output = word, #the new column name to put the text in
+                input = `How do you define successful data communication or translation?`)  %>%
+  anti_join(stop_words, by = "word")
+
+## bar chart
+q1 %>% 
+  count(word) %>% 
+  filter(n >1) %>% 
+  ggplot(aes(x = reorder(word,n), y = n))+ #reorder makes the bars go in order high to low
+  geom_col()+
+  scale_y_continuous(expand = c(0,0))+
+  theme(axis.text.x = element_text(angle = 45))
+
+## wordcloud
+q1 %>% 
+  count(word) %>% 
+  with(wordcloud(
+    words = word,
+    freq = n,
+    random.order = FALSE,
+    scale = c(2, 0.5),
+    min.freq = 1,
+    max.words = 100,
+    colors = c("#6FA8F5",
+               "#FF4D45",
+               "#FFC85E")
+  ))
+```
+
+
+Q2: List rules/principles
+```{r}
+q2 <- data %>% 
+  select(`List 1-5 rules or principles for successful data communication:`) %>% 
+  unnest_tokens(output = word, #the new column name to put the text in
+                input = `List 1-5 rules or principles for successful data communication:`)  %>%
+  anti_join(stop_words, by = "word")
+
+## bar chart
+q2 %>% 
+  count(word) %>% 
+  filter(n >1, !(word %in% c("1", "2", "3"))) %>% 
+  ggplot(aes(x = reorder(word,n), y = n))+ #reorder makes the bars go in order high to low
+  geom_col()+
+  scale_y_continuous(expand = c(0,0))+
+  theme(axis.text.x = element_text(angle = 45))
+
+## wordcloud
+q2 %>% 
+  count(word) %>% 
+  # remove numbers from answers
+  filter(!(word %in% c("1", "2", "3"))) %>% 
+  
+  # make the wordcloud
+  with(wordcloud(
+    words = word,
+    freq = n,
+    random.order = FALSE,
+    scale = c(2, 0.25),
+    min.freq = 1,
+    max.words = 100,
+    colors = c("#6FA8F5",
+               "#FF4D45",
+               "#FFC85E")
+  ))
+```
+
+Q3: Give examples of success
+```{r}
+q3 <- data %>% 
+  select(`List 1-5 examples of when/how the rules or principles were successful:`) %>% 
+  unnest_tokens(output = word, #the new column name to put the text in
+                input = `List 1-5 examples of when/how the rules or principles were successful:`)  %>%
+  anti_join(stop_words, by = "word")
+
+## bar chart
+q3 %>% 
+  count(word) %>% 
+  filter(n >1, !(word %in% c("1", "2", "3"))) %>% 
+  ggplot(aes(x = reorder(word,n), y = n))+ #reorder makes the bars go in order high to low
+  geom_col()+
+  scale_y_continuous(expand = c(0,0))+
+  theme(axis.text.x = element_text(angle = 45))
+
+## wordcloud
+q3 %>% 
+  count(word) %>% 
+  # remove numbers from answers
+  filter(!(word %in% c("1", "2", "3"))) %>% 
+  
+  # make the wordcloud
+  with(wordcloud(
+    words = word,
+    freq = n,
+    random.order = FALSE,
+    scale = c(2, 0.25),
+    min.freq = 1,
+    max.words = 100,
+    colors = c("#6FA8F5",
+               "#FF4D45",
+               "#FFC85E")
+  ))
+```
+
+Q4: What tools do you use?
+```{r}
+q4 <- data %>% 
+  select(`What technical tools do you use for data communication?`) %>% 
+  unnest_tokens(output = word, #the new column name to put the text in
+                input = `What technical tools do you use for data communication?`)  %>%
+  anti_join(stop_words, by = "word")
+
+## bar chart
+q4 %>% 
+  count(word) %>% 
+  filter(n >1, !(word %in% c("1", "2", "3"))) %>% 
+  ggplot(aes(x = reorder(word,n), y = n))+ #reorder makes the bars go in order high to low
+  geom_col()+
+  scale_y_continuous(expand = c(0,0))+
+  theme(axis.text.x = element_text(angle = 45))
+
+## wordcloud
+q4 %>% 
+  count(word) %>% 
+  # remove numbers from answers
+  filter(!(word %in% c("1", "2", "3"))) %>% 
+  
+  # make the wordcloud
+  with(wordcloud(
+    words = word,
+    freq = n,
+    random.order = FALSE,
+    scale = c(2, 0.25),
+    min.freq = 1,
+    max.words = 100,
+    colors = c("#6FA8F5",
+               "#FF4D45",
+               "#FFC85E")
+  ))
+```
+
